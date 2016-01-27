@@ -1,5 +1,5 @@
 //
-//  SelfInfoViewController.swift
+//  PlacesViewController.swift
 //  FootBall
 //
 //  Created by 张宏台 on 16/1/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SelfInfoViewController: UIViewController {
+class PlacesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

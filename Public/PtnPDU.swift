@@ -229,4 +229,6 @@ class PtnPDU
 	}
     func decodeNoBodySucc(){
     }
+    func getCoreData(){
+    }
 }

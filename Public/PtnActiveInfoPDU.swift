@@ -30,4 +30,7 @@ class PtnActiveInfoQueryPDU :PtnPDU
 	func setHistoryViewFields(){
 		self.setStringParameter("fields",value:"activeid,title,creatorname,creatoravatar,introduce,starttime,country,province,city,area,address,inmember");
 	}
+    override func getCoreData(){
+
+    }
 }

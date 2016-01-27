@@ -32,11 +32,13 @@ struct PtnCreateBody:JSONJoy{
 struct PtnLoginBody:JSONJoy{
 	var accessToken:String?;
 	var userId:String?;
+    var xmppPassword:String?
 	init(){
 	}
 	init(_ decoder:JSONDecoder) {
 		accessToken = decoder["token"].string;
 		userId = decoder["accountId"].string;
+        xmppPassword =  decoder["xmpppassword"].string;
 	}
 }
 struct ActiveInfo: JSONJoy
@@ -209,7 +211,10 @@ struct ChatMessage
 		sendTime = decoder["sendtime"].string
 		id = decoder["nindex"].integer
     }
-    
+    var xmppStatus:Int?;
+    var apiStatus:Int?;
+    var readStatus:Int?;
+    var fileData:NSData?;
 }
 struct Comment
 {
