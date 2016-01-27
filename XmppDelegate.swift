@@ -17,7 +17,7 @@ class XmppDelegate: XMPPStreamDelegate {
     var chatDelegate:ChatDelegate?
     var messageDelegate:MessageDelegate?;
 
-    func init(){
+    init(){
     }
 
     func setupStream(){
@@ -31,7 +31,7 @@ class XmppDelegate: XMPPStreamDelegate {
     func goOnline(){
     
         //发送在线状态
-        var presence:XMPPPresence = XMPPPresence()
+        let presence:XMPPPresence = XMPPPresence()
         xmppStream!.sendElement(presence)
     
     }
@@ -39,7 +39,7 @@ class XmppDelegate: XMPPStreamDelegate {
     func goOffline(){
     
         //发送下线状态
-        var presence:XMPPPresence = XMPPPresence(type:"unavailable");
+        let presence:XMPPPresence = XMPPPresence(type:"unavailable");
         xmppStream!.sendElement(presence)
     
     }
@@ -49,11 +49,10 @@ class XmppDelegate: XMPPStreamDelegate {
         self.setupStream()
     
         //从本地取得用户名，密码和服务器地址
-        var defaults:NSUserDefaults  = NSUserDefaults.standardUserDefaults()
         
-        var userId:String  = defaults.stringForKey(USERID)
-        var pass:String = defaults.stringForKey(PASS)
-        var server:String = defaults.stringForKey(SERVER)
+        let userId:String  = getLocalUserString("username")!
+        let pass:String = getLocalUserString("xmpppassword")!
+        let server:String = getLocalUserString("server")!
         
         if (!xmppStream!.isDisconnected()) {
             return true
@@ -71,12 +70,15 @@ class XmppDelegate: XMPPStreamDelegate {
         password = pass;
         
         //连接服务器
-        var error:NSError? ;
-        if (!xmppStream!.connectWithTimeout(XMPPStreamTimeoutNone,error: &error)) {
-            println("cannot connect \(server)")
+        //var error:NSError? ;
+        do{
+            try xmppStream!.connectWithTimeout(XMPPStreamTimeoutNone)
+        }catch{
+            print("cannot connect \(server)")
             return false;
         }
-        println("connect success!!!")
+
+        print("connect success!!!")
         return true;
     
     }
@@ -89,37 +91,38 @@ class XmppDelegate: XMPPStreamDelegate {
     }
     //XMPPStreamDelegate协议实现
     //连接服务器
-    func xmppStreamDidConnect(sender:XMPPStream ){
-        println("xmppStreamDidConnect \(xmppStream!.isConnected())")
+    @objc func xmppStreamDidConnect(sender:XMPPStream ){
+        print("xmppStreamDidConnect \(xmppStream!.isConnected())")
         isOpen = true;
-        var error:NSError? ;
+        //var error:NSError? ;
         //验证密码
-        println(password)
+        print(password)
         self.goOnline()
-        xmppStream!.authenticateWithPassword(password ,error:&error);
-        if error != nil {
-            println(error!)
+        do{
+            try self.xmppStream!.authenticateWithPassword(password);
+        }catch {
+            print("error");
         }
     }
     
     //验证通过
-    func xmppStreamDidAuthenticate(sender:XMPPStream ){
-        println("xmppStreamDidAuthenticate")
+    @objc func xmppStreamDidAuthenticate(sender:XMPPStream ){
+        print("xmppStreamDidAuthenticate")
         self.goOnline()
     }
-    func xmppStream(sender:XMPPStream , didNotAuthenticate error:DDXMLElement ){
-        println(error)
+    @objc func xmppStream(sender:XMPPStream , didNotAuthenticate error:DDXMLElement ){
+        print(error)
     }
-    //收到消息
-    func xmppStream(sender:XMPPStream ,didReceiveMessage message:XMPPMessage? ){
+    //收到消息@objc 
+    @objc func xmppStream(sender:XMPPStream ,didReceiveMessage message:XMPPMessage? ){
     
        
         if message != nil {
-            println(message)
-            var cont:String = message!.elementForName("body").stringValue();
-            var from:String = message!.attributeForName("from").stringValue();
+            print(message)
+            let cont:String = message!.elementForName("body").stringValue();
+            let from:String = message!.attributeForName("from").stringValue();
             
-            var msg:Message = Message(content:cont,sender:from,ctime:getCurrentTime())
+            let msg:Message = Message(type:.Text,content:cont,sender:from,ctime:getCurrentTime())
             
             
             //消息委托(这个后面讲)
@@ -129,21 +132,21 @@ class XmppDelegate: XMPPStreamDelegate {
     }
     
     //收到好友状态
-    func xmppStream(sender:XMPPStream ,didReceivePresence presence:XMPPPresence ){
+    @objc func xmppStream(sender:XMPPStream ,didReceivePresence presence:XMPPPresence ){
     
-        println(presence)
+        print(presence)
         
         //取得好友状态
-        var presenceType:NSString = presence.type() //online/offline
+        let presenceType:NSString = presence.type() //online/offline
         //当前用户
-        var userId:NSString  = sender.myJID.user;
+        let userId:NSString  = sender.myJID.user;
         //在线用户
-        var presenceFromUser:NSString  = presence.from().user;
+        let presenceFromUser:NSString  = presence.from().user;
         
-        if (!presenceFromUser.isEqualToString(userId)) {
+        if (!presenceFromUser.isEqualToString(userId as String)) {
             
             //在线状态
-            var srv:String = "macshare.local"
+            let srv:String = "macshare.local"
             if (presenceType.isEqualToString("available")) {
                 
                 //用户列表委托

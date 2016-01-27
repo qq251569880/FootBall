@@ -30,3 +30,24 @@ let ERR_REQUEST_EXCEPTION:Int = 1003;
 let jsonFailed:ErrInfo = ErrInfo(code:ERR_JSON_DECODE,info:"decode json string failed");
 let requestFailed:ErrInfo = ErrInfo(code:ERR_REQUEST_RESPONSE,info:"Http requestFailed");
 
+func getCurrentTime() -> String{
+    
+    let nowUTC:NSDate  = NSDate()
+    
+    
+    
+    let dateFormatter:NSDateFormatter  = NSDateFormatter()
+    
+    dateFormatter.timeZone = NSTimeZone.localTimeZone()
+    
+    dateFormatter.dateStyle = .MediumStyle
+    
+    dateFormatter.timeStyle = .MediumStyle
+    
+    
+    
+    return dateFormatter.stringFromDate(nowUTC)
+    
+    
+    
+}

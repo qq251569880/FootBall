@@ -9,6 +9,8 @@
 import UIKit
 
 class LoginViewController: UIViewController,PduDelegate {
+    @IBOutlet weak var nameField: UITextField!
+    @IBOutlet weak var passField: UITextField!
 
     var userPdu:PtnUserInfoPDU?
     var loginPdu:PtnLoginPDU?
@@ -40,7 +42,7 @@ class LoginViewController: UIViewController,PduDelegate {
         if(actionId == "login"){
             setLocalUserString("accesstoken",value: loginPdu!.loginBody!.accessToken!);
             setLocalUserString("userid",value: loginPdu!.loginBody!.userId!);
-            print("xmpp password:\(loginPdu!.loginBody!xmppPassword!)");
+            print("xmpp password:\(loginPdu!.loginBody!.xmppPassword!)");
 
             userPdu = PtnUserInfoPDU(url: "\(serverUrl)user/query");
             userPdu!.setHeader("accesstoken",value: loginPdu!.loginBody!.accessToken!);
