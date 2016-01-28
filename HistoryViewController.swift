@@ -80,7 +80,7 @@ class HistoryViewController: UITableViewController,PduDelegate {
         
     }
     func requestFailed(err: ErrInfo) {
-        
+        print(err.print());
     }
     func updateChatMessage(){
     }

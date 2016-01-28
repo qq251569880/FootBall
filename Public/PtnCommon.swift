@@ -1,5 +1,6 @@
 
 let serverUrl:String = "http://yuyanshu.cn:8001/app.php/"
+let xmppServer = ""
 enum RequestRet{
 	case ResponseErr
 	case JsonDecodeErr
@@ -14,6 +15,9 @@ struct ErrInfo{
     init(code:Int,info:String){
         errCode = code;
         errInfo = info;
+    }
+    func print() -> String{
+        return "errorcode:\(errCode):\(errInfo)";
     }
 }
 enum RegPassAction{

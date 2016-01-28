@@ -1,5 +1,5 @@
 //
-//  MessageDelegate.swift
+//  ChatDelegate.swift
 //  Xmpp
 //
 //  Created by 张宏台 on 14-7-16.
@@ -8,6 +8,11 @@
 
 import Foundation
 
+protocol ChatDelegate{
+    func newBuddyOnline(buddyName:String)
+    func buddyWentOffline(buddyName:String)
+    func didDisconnect()
+}
 protocol MessageDelegate{
     func newMessageReceived(msg:Message)
 }

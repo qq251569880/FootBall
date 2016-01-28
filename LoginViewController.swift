@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController,PduDelegate {
+class LoginViewController: UIViewController,PduDelegate,,UITextFieldDelegate {
     @IBOutlet weak var nameField: UITextField!
     @IBOutlet weak var passField: UITextField!
 
@@ -28,22 +28,46 @@ class LoginViewController: UIViewController,PduDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    func getXmppDelegate() -> XmppDelegate {
+        let appDel = UIApplication.sharedApplication().delegate as! AppDelegate;
+        return appDel.xmppDelegate!;
+    }
+
     @IBAction func loginBtnClick(sender: AnyObject) {
+        if(nameField!.text == nil || nameField!.text == ""){
+            let alertController = UIAlertController(title: "提示", message: "请输入用户名", preferredStyle: .Alert);
+            alertController.addAction(okAction);
+            self.presentViewController(alertController, animated: true, completion: {nameField!.becomeFirstResponder()})
+            return;
+        }
+        if(passField!.text == nil || passField!.text == ""){
+            let alertController = UIAlertController(title: "提示", message: "请输入密码", preferredStyle: .Alert);
+            alertController.addAction(okAction);
+            self.presentViewController(alertController, animated: true, completion: {passField!.becomeFirstResponder()})
+            return;
+        }
         loginPdu = PtnLoginPDU(url: "\(serverUrl)login");
         loginPdu!.delegate = self;
         loginPdu!.setStringParameter("username",value: nameField!.text!);
         loginPdu!.setStringParameter("password",value: passField!.text!);
+        setLocalUserString("username",nameField!.text!);
         loginPdu!.requestHttp();
     }
     func requestFailed(err: ErrInfo) {
-        
+        print(err.print());
     }
     func returnSuccess(actionId:String){
         if(actionId == "login"){
             setLocalUserString("accesstoken",value: loginPdu!.loginBody!.accessToken!);
             setLocalUserString("userid",value: loginPdu!.loginBody!.userId!);
             print("xmpp password:\(loginPdu!.loginBody!.xmppPassword!)");
-
+            setLocalUserString("xmpppassword",value: loginPdu!.loginBody!.xmppPassword!);
+            let xmppRet = self.getXmppDelegate().connect();
+            if(xmppRet == false){
+                let alertController = UIAlertController(title: "提示", message: "聊天服务登录失败", preferredStyle: .Alert);
+                alertController.addAction(okAction);
+                self.presentViewController(alertController, animated: true, completion: nil)
+            }
             userPdu = PtnUserInfoPDU(url: "\(serverUrl)user/query");
             userPdu!.setHeader("accesstoken",value: loginPdu!.loginBody!.accessToken!);
             userPdu!.delegate = self;
@@ -66,17 +90,27 @@ class LoginViewController: UIViewController,PduDelegate {
                     setLocalUserString("country",value: country);
                 }
                 if let province = userinfo.province {
-                    setLocalUserString("provalue: vince",value: province);
+                    setLocalUserString("province",value: province);
                 }
                 if let city = userinfo.city {
                     setLocalUserString("city",value:city);
                 }
                 if let introduce = userinfo.introduce {
-                    setLocalUserString("intrvalue: oduce",value:introduce);
+                    setLocalUserString("introduce",value:introduce);
                 }
                 break;
             }
         }
 	}
+    func textFieldShouldReturn(textField:UITextField) -> Bool {
+        if (textField == self.namefield) {
+            textField.resignFirstResponder();
+        }
+        if (textField == self.passfield) {
+            textField.resignFirstResponder();
+        }
+        return true
+    }
+
 }
 
