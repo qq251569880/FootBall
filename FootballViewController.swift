@@ -27,22 +27,22 @@ class FootballViewController: UITableViewController,PduDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    func getTextLabel(left:Float,top:Float,direct:Bool,fontSize:Int,text:String) -> UILabel {
+    func getTextLabel(left:CGFloat,top:CGFloat,direct:Bool,fontSize:Int,text:String) -> UILabel {
         //标题
-        let font:UIFont = UIFont.systemFontOfSize(fontSize);
+        let font:UIFont = UIFont.systemFontOfSize(CGFloat(fontSize));
         let textSize = CGSize(width: 260.0 ,height: 10000.0)
         let rect:CGRect = text.boundingRectWithSize(textSize, options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName:font], context: nil)
         let size:CGSize = rect.size;
         
-        let bubbleText = UILabel(frame:CGRectMake(direct ? left,260-left,top,size.width+5,size.height+5));
+        let bubbleText = UILabel(frame:CGRectMake(direct ? left:260-left,top,size.width+5,size.height+5));
         bubbleText.backgroundColor = UIColor.clearColor();
-        bubbleText.font = UIFont.systemFontOfSize(font);
+        bubbleText.font = font;
         bubbleText.numberOfLines = 0;
         bubbleText.lineBreakMode = .ByWordWrapping;
         bubbleText.text = text;
         return bubbleText;
     }
-    func activeView(active:ActiveInfo,row:Int){
+    func activeView(active:ActiveInfo,row:Int) -> UIView{
         let retView = UIView(frame:CGRectZero);
         retView.backgroundColor = UIColor.clearColor();
         //背景图片
@@ -55,13 +55,13 @@ class FootballViewController: UITableViewController,PduDelegate {
         bimgView.layer.cornerRadius = 12;
         bimgView.layer.masksToBounds = true;
     
-        let titleLabel = getTextLabel(left:100,top:5,direct:true,fontSize:16,text:active.title);
-        let timeLabel = getTextLabel(left:100,top:25,direct:true,fontSize:14,text:"时间:\(active.startTime!.subStringFrom(5).subStringTo(11))");
-        let placeLabel = getTextLabel(left:100,top:40,direct:true,fontSize:14,text:"地点：\(active.address!)");
-        let contentLabel = getTextLabel(left:100,top:55,direct:true,fontSize:14,text:active.introduce);
-        let creatorLabel = getTextLabel(left:10,top:90,direct:true,fontSize:14,text:active.creatorName);
+        let titleLabel = getTextLabel(100,top:5,direct:true,fontSize:16,text:active.title!);
+        let timeLabel = getTextLabel(100,top:25,direct:true,fontSize:14,text:"时间:\(active.startTime!.subStringFrom(5).subStringTo(11))");
+        let placeLabel = getTextLabel(100,top:40,direct:true,fontSize:14,text:"地点：\(active.address!)");
+        let contentLabel = getTextLabel(100,top:55,direct:true,fontSize:14,text:active.introduce!);
+        let creatorLabel = getTextLabel(10,top:90,direct:true,fontSize:14,text:active.creatorName!);
         var partiStr = "";
-        if let num = activePdu!.activeInfo![indexPath.row].inmember {
+        if let num = active.inmember {
             if(num > 0){
                 partiStr = "已经有\(active.inmember)人参与";
             }else{
@@ -70,9 +70,9 @@ class FootballViewController: UITableViewController,PduDelegate {
         }else{
             partiStr = "暂无人参与";
         } 
-        let partiLabel = getTextLabel(left:10,top:6,direct:false,fontSize:12,text:partiStr);
+        let partiLabel = getTextLabel(10,top:6,direct:false,fontSize:12,text:partiStr);
         
-        let creatorImg:UIImage? = nil;
+        var creatorImg:UIImage? = nil;
         let imageUrl = active.creatorAvatar;
         if(imageUrl != nil){
             if let aimage = UIImage(data:NSData(contentsOfURL:NSURL(string:imageUrl!)!)!) {
@@ -82,7 +82,7 @@ class FootballViewController: UITableViewController,PduDelegate {
         if(creatorImg == nil){
             creatorImg = UIImage(named: "default.png")!
         }
-        let avatarImage:UIImageView = UIImageView(image:creatorImg.stretchableImageWithLeftCapWidth(86,topCapHeight:86));
+        let avatarImage:UIImageView = UIImageView(image:creatorImg!.stretchableImageWithLeftCapWidth(86,topCapHeight:86));
         avatarImage.layer.cornerRadius = 43;
         avatarImage.layer.masksToBounds = true;
 
@@ -94,7 +94,7 @@ class FootballViewController: UITableViewController,PduDelegate {
         retView.addSubview(contentLabel);
         retView.addSubview(creatorLabel);
         retView.addSubview(partiLabel);
-        retView.addSubview(creatorImg);
+        retView.addSubview(avatarImage);
         retView.addSubview(avatarImage);
         return retView;
     }
@@ -110,7 +110,7 @@ class FootballViewController: UITableViewController,PduDelegate {
                 cellView.removeFromSuperview();
             }
         }
-        cell!.addSubview(activeView:activePdu!.activeInfo![indexPath.row],row:indexPath.row);
+        cell!.addSubview(activeView(activePdu!.activeInfo![indexPath.row],row:indexPath.row));
 /*        let sportCell:UITableViewCell? = tableView.dequeueReusableCellWithIdentifier(cellId,forIndexPath:indexPath);
         let titleLabel:UILabel = sportCell!.viewWithTag(1) as! UILabel;
         titleLabel.text = activePdu!.activeInfo![indexPath.row].title;

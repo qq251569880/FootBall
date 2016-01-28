@@ -52,7 +52,7 @@ class XmppDelegate: XMPPStreamDelegate {
         
         let userId:String  = getLocalUserString("username")!
         let pass:String = getLocalUserString("xmpppassword")!
-        let server:String = getLocalUserString("server")!
+        let server:String = xmppServer
         
         if (!xmppStream!.isDisconnected()) {
             return true

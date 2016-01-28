@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController,PduDelegate,,UITextFieldDelegate {
+class LoginViewController: UIViewController,PduDelegate,UITextFieldDelegate {
     @IBOutlet weak var nameField: UITextField!
     @IBOutlet weak var passField: UITextField!
 
@@ -34,23 +34,24 @@ class LoginViewController: UIViewController,PduDelegate,,UITextFieldDelegate {
     }
 
     @IBAction func loginBtnClick(sender: AnyObject) {
-        if(nameField!.text == nil || nameField!.text == ""){
+        let okAction = UIAlertAction(title: "好的", style: .Default, handler: nil);
+       if(nameField!.text == nil || nameField!.text == ""){
             let alertController = UIAlertController(title: "提示", message: "请输入用户名", preferredStyle: .Alert);
             alertController.addAction(okAction);
-            self.presentViewController(alertController, animated: true, completion: {nameField!.becomeFirstResponder()})
+            self.presentViewController(alertController, animated: true, completion: {self.nameField!.becomeFirstResponder()})
             return;
         }
         if(passField!.text == nil || passField!.text == ""){
             let alertController = UIAlertController(title: "提示", message: "请输入密码", preferredStyle: .Alert);
             alertController.addAction(okAction);
-            self.presentViewController(alertController, animated: true, completion: {passField!.becomeFirstResponder()})
+            self.presentViewController(alertController, animated: true, completion: {self.passField!.becomeFirstResponder()})
             return;
         }
         loginPdu = PtnLoginPDU(url: "\(serverUrl)login");
         loginPdu!.delegate = self;
         loginPdu!.setStringParameter("username",value: nameField!.text!);
         loginPdu!.setStringParameter("password",value: passField!.text!);
-        setLocalUserString("username",nameField!.text!);
+        setLocalUserString("username",value: nameField!.text!);
         loginPdu!.requestHttp();
     }
     func requestFailed(err: ErrInfo) {
@@ -64,6 +65,7 @@ class LoginViewController: UIViewController,PduDelegate,,UITextFieldDelegate {
             setLocalUserString("xmpppassword",value: loginPdu!.loginBody!.xmppPassword!);
             let xmppRet = self.getXmppDelegate().connect();
             if(xmppRet == false){
+                let okAction = UIAlertAction(title: "好的", style: .Default, handler: nil);
                 let alertController = UIAlertController(title: "提示", message: "聊天服务登录失败", preferredStyle: .Alert);
                 alertController.addAction(okAction);
                 self.presentViewController(alertController, animated: true, completion: nil)
@@ -103,10 +105,10 @@ class LoginViewController: UIViewController,PduDelegate,,UITextFieldDelegate {
         }
 	}
     func textFieldShouldReturn(textField:UITextField) -> Bool {
-        if (textField == self.namefield) {
+        if (textField == self.nameField) {
             textField.resignFirstResponder();
         }
-        if (textField == self.passfield) {
+        if (textField == self.passField) {
             textField.resignFirstResponder();
         }
         return true

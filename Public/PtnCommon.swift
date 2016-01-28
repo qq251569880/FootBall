@@ -1,6 +1,6 @@
 
 let serverUrl:String = "http://yuyanshu.cn:8001/app.php/"
-let xmppServer = ""
+let xmppServer = "http://yuyanshu.cn:9090"
 enum RequestRet{
 	case ResponseErr
 	case JsonDecodeErr
