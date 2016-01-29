@@ -32,13 +32,15 @@ struct PtnCreateBody:JSONJoy{
 struct PtnLoginBody:JSONJoy{
 	var accessToken:String?;
 	var userId:String?;
-    var xmppPassword:String?
+    var xmppPassword:String?;
+    var xmppStatus:String?;
 	init(){
 	}
 	init(_ decoder:JSONDecoder) {
 		accessToken = decoder["token"].string;
 		userId = decoder["accountId"].string;
         xmppPassword =  decoder["xmpppassword"].string;
+        xmppStatus = decoder["xmppstatus"].string;
 	}
 }
 struct ActiveInfo: JSONJoy

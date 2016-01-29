@@ -63,12 +63,22 @@ class LoginViewController: UIViewController,PduDelegate,UITextFieldDelegate {
             setLocalUserString("userid",value: loginPdu!.loginBody!.userId!);
             print("xmpp password:\(loginPdu!.loginBody!.xmppPassword!)");
             setLocalUserString("xmpppassword",value: loginPdu!.loginBody!.xmppPassword!);
-            let xmppRet = self.getXmppDelegate().connect();
-            if(xmppRet == false){
+            if (loginPdu!.loginBody!.xmppStatus == "reged"){
+                let xmppRet = self.getXmppDelegate().connect();
+                if (xmppRet == false){
+                    let okAction = UIAlertAction(title: "好的", style: .Default, handler: nil);
+                    let alertController = UIAlertController(title: "提示", message: "聊天服务登录失败", preferredStyle: .Alert);
+                    alertController.addAction(okAction);
+                    self.presentViewController(alertController, animated: true, completion: nil)
+                }
+            }else if (loginPdu!.loginBody!.xmppStatus == "unreg"){
+                
+            }else{
                 let okAction = UIAlertAction(title: "好的", style: .Default, handler: nil);
-                let alertController = UIAlertController(title: "提示", message: "聊天服务登录失败", preferredStyle: .Alert);
+                let alertController = UIAlertController(title: "提示", message: "需要修改xmpp密码", preferredStyle: .Alert);
                 alertController.addAction(okAction);
                 self.presentViewController(alertController, animated: true, completion: nil)
+
             }
             userPdu = PtnUserInfoPDU(url: "\(serverUrl)user/query");
             userPdu!.setHeader("accesstoken",value: loginPdu!.loginBody!.accessToken!);

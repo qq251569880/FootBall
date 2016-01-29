@@ -13,7 +13,8 @@ class XmppDelegate: XMPPStreamDelegate {
 
     var xmppStream:XMPPStream?
     var password:String = ""
-    var isOpen:Bool = false
+    var isOpen:Bool = false;
+    var isReged = true;
     var chatDelegate:ChatDelegate?
     var messageDelegate:MessageDelegate?;
 
@@ -44,10 +45,10 @@ class XmppDelegate: XMPPStreamDelegate {
     
     }
     
-    func connect() -> Bool{
+    func connect(isreged:Bool) -> Bool{
     
         self.setupStream()
-    
+        isReged = isreged;
         //从本地取得用户名，密码和服务器地址
         
         let userId:String  = getLocalUserString("username")!
@@ -97,12 +98,24 @@ class XmppDelegate: XMPPStreamDelegate {
         //var error:NSError? ;
         //验证密码
         print(password)
-        self.goOnline()
-        do{
-            try self.xmppStream!.authenticateWithPassword(password);
-        }catch {
-            print("error");
+        //self.goOnline()
+        if(isReged){
+            do{
+                try self.xmppStream!.authenticateWithPassword(password);
+            }catch {
+                print("error");
+            }
+        }else{
+            do{
+                try self.xmppStream!.registerWithPassword(password);
+            }catch {
+                print("error");
+            }
         }
+    }
+    //连接服务器
+    @objc func xmppStreamDidDisConnect(sender:XMPPStream ,withError error:NSError){
+        print(error)
     }
     
     //验证通过
@@ -111,6 +124,15 @@ class XmppDelegate: XMPPStreamDelegate {
         self.goOnline()
     }
     @objc func xmppStream(sender:XMPPStream , didNotAuthenticate error:DDXMLElement ){
+        print(error)
+    }
+    //注册成功
+    @objc func xmppStreamDidRegister(sender:XMPPStream ){
+        print("xmppStreamDidRegister")
+        //self.goOnline()
+        isReged = true;
+    }
+    @objc func xmppStream(sender:XMPPStream , didNotRegister error:DDXMLElement ){
         print(error)
     }
     //收到消息@objc 
