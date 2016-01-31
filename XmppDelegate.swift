@@ -9,7 +9,7 @@
 import UIKit
 
 
-class XmppDelegate: XMPPStreamDelegate {
+class XmppDelegate: NSObject,XMPPStreamDelegate {
 
     var xmppStream:XMPPStream?
     var password:String = ""
@@ -18,7 +18,7 @@ class XmppDelegate: XMPPStreamDelegate {
     var chatDelegate:ChatDelegate?
     var messageDelegate:MessageDelegate?;
 
-    init(){
+    override init(){
     }
 
     func setupStream(){
@@ -93,7 +93,7 @@ class XmppDelegate: XMPPStreamDelegate {
     //XMPPStreamDelegate协议实现
     //连接服务器
     @objc func xmppStreamDidConnect(sender:XMPPStream ){
-        print("xmppStreamDidConnect \(xmppStream!.isConnected())")
+        print("xmppStreamDidConnect: \(xmppStream!.isConnected())")
         isOpen = true;
         //var error:NSError? ;
         //验证密码
@@ -115,7 +115,7 @@ class XmppDelegate: XMPPStreamDelegate {
     }
     //连接服务器
     @objc func xmppStreamDidDisConnect(sender:XMPPStream ,withError error:NSError){
-        print(error)
+        print("xmppStreamDidDisConnect:\(error)")
     }
     
     //验证通过
@@ -133,7 +133,7 @@ class XmppDelegate: XMPPStreamDelegate {
         isReged = true;
     }
     @objc func xmppStream(sender:XMPPStream , didNotRegister error:DDXMLElement ){
-        print(error)
+        print("didNotRegister:\(error)")
     }
     //收到消息@objc 
     @objc func xmppStream(sender:XMPPStream ,didReceiveMessage message:XMPPMessage? ){

@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         xmppDelegate = XmppDelegate();
+//        self.window?.rootViewController = LoginViewController();
         return true
     }
 

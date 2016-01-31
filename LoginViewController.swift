@@ -19,11 +19,24 @@ class LoginViewController: UIViewController,PduDelegate,UITextFieldDelegate {
         // Do any additional setup after loading the view, typically from a nib.
         let accessToken = getLocalUserString("accesstoken");
         if accessToken != nil{
-            self.performSegueWithIdentifier("main",sender:self);
+            let xmppRet = self.getXmppDelegate().connect(true);
+            if (xmppRet == false){
+                let okAction = UIAlertAction(title: "好的", style: .Default, handler: nil);
+                let alertController = UIAlertController(title: "提示", message: "聊天服务登录失败", preferredStyle: .Alert);
+                alertController.addAction(okAction);
+                self.presentViewController(alertController, animated: true, completion: nil)
+            }
+            userPdu = PtnUserInfoPDU(url: "\(serverUrl)user/query");
+            userPdu!.setHeader("accesstoken",value: accessToken!);
+            userPdu!.delegate = self;
+            userPdu!.requestHttp();
         }
 
     }
 
+    @IBAction func registBtnClick(sender: AnyObject) {
+        self.performSegueWithIdentifier("regpass",sender:self);
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -64,7 +77,7 @@ class LoginViewController: UIViewController,PduDelegate,UITextFieldDelegate {
             print("xmpp password:\(loginPdu!.loginBody!.xmppPassword!)");
             setLocalUserString("xmpppassword",value: loginPdu!.loginBody!.xmppPassword!);
             if (loginPdu!.loginBody!.xmppStatus == "reged"){
-                let xmppRet = self.getXmppDelegate().connect();
+                let xmppRet = self.getXmppDelegate().connect(true);
                 if (xmppRet == false){
                     let okAction = UIAlertAction(title: "好的", style: .Default, handler: nil);
                     let alertController = UIAlertController(title: "提示", message: "聊天服务登录失败", preferredStyle: .Alert);
@@ -89,6 +102,7 @@ class LoginViewController: UIViewController,PduDelegate,UITextFieldDelegate {
     //PduDelegate协议
     func reloadTable(){
 		//activeList.reloadData();
+        print("getting user info");
         let userid = getLocalUserString("userid");
         for userinfo in userPdu!.userInfo! {
             if(userinfo.userId == userid){
@@ -113,7 +127,8 @@ class LoginViewController: UIViewController,PduDelegate,UITextFieldDelegate {
                 break;
             }
         }
-	}
+        self.dismissViewControllerAnimated(true, completion: nil);
+    }
     func textFieldShouldReturn(textField:UITextField) -> Bool {
         if (textField == self.nameField) {
             textField.resignFirstResponder();

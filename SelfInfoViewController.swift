@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SelfInfoViewController: UIViewController {
+class SelfInfoViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

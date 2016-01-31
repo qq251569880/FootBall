@@ -16,7 +16,7 @@ extension ChatMessageData {
 
     @NSManaged var activeId: String?
     @NSManaged var userId: String?
-    @NSManaged var msgType: NSNumber?
+    @NSManaged var msgType: String?
     @NSManaged var content: String?
     @NSManaged var fileData: NSData?
     @NSManaged var sendTime: NSDate?

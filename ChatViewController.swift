@@ -130,7 +130,12 @@ class ChatViewController: UITableViewController,MessageDelegate {
             mes.addAttributeWithName("from" ,stringValue:getLocalUserString("userid"))
             //组合
             mes.addChild(body)
-            
+            var chatMsg = ChatMessage();
+            chatMsg.activeId = "11111111";
+            chatMsg.userId = getLocalUserString("userid");
+            chatMsg.messageType = "Text";
+            chatMsg.content = message;
+            saveChatMessage(chatMsg);
             //发送消息
             self.getXmppDelegate().sendElement(mes)
             

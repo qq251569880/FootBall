@@ -10,6 +10,9 @@ import UIKit
 
 class FootballViewController: UITableViewController,PduDelegate {
 
+    let viewWidth = UIScreen.mainScreen().bounds.width; //self.view.frame.size.width;
+    let bgImgMargin:CGFloat = 5;
+
     @IBOutlet var sportsList: UITableView!
     var activePdu:PtnActiveInfoQueryPDU?
     override func viewDidLoad() {
@@ -29,8 +32,10 @@ class FootballViewController: UITableViewController,PduDelegate {
     }
     func getTextLabel(left:CGFloat,top:CGFloat,direct:Bool,fontSize:Int,text:String) -> UILabel {
         //标题
+        let bgImgWidth = viewWidth - CGFloat(2 * bgImgMargin);
+
         let font:UIFont = UIFont.systemFontOfSize(CGFloat(fontSize));
-        let textSize = CGSize(width: 260.0 ,height: 10000.0)
+        let textSize = CGSize(width: bgImgWidth ,height: 10000.0)
         let rect:CGRect = text.boundingRectWithSize(textSize, options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName:font], context: nil)
         let size:CGSize = rect.size;
         
@@ -47,19 +52,27 @@ class FootballViewController: UITableViewController,PduDelegate {
         retView.backgroundColor = UIColor.clearColor();
         //背景图片
         let imgName = (row % 2) == 0 ? "itemgreen":"itemblue";
-        let imgPath = NSBundle.mainBundle().pathForResource(imgName,ofType:"png");
-        let bimg:UIImage = UIImage(imageLiteral: imgPath!);
+        //let imgPath = NSBundle.mainBundle().pathForResource(imgName,ofType:"png");
+        //let bimg:UIImage = UIImage(imageLiteral: imgPath!);
+        let bimg:UIImage = UIImage(named: imgName)!
         //let a = floorf(Float(bubble.size.width)/Float(2.0))
         let bimgView:UIImageView = UIImageView(image:bimg.stretchableImageWithLeftCapWidth(260,topCapHeight:120));
-        bimgView.frame = CGRectMake(0,5,260,120);
-        bimgView.layer.cornerRadius = 12;
+        let bgImgWidth = viewWidth - CGFloat(2 * bgImgMargin);
+        bimgView.frame = CGRectMake(bgImgMargin,bgImgMargin,bgImgWidth,110);
+        bimgView.layer.cornerRadius = 5;
         bimgView.layer.masksToBounds = true;
-    
-        let titleLabel = getTextLabel(100,top:5,direct:true,fontSize:16,text:active.title!);
-        let timeLabel = getTextLabel(100,top:25,direct:true,fontSize:14,text:"时间:\(active.startTime!.subStringFrom(5).subStringTo(11))");
-        let placeLabel = getTextLabel(100,top:40,direct:true,fontSize:14,text:"地点：\(active.address!)");
-        let contentLabel = getTextLabel(100,top:55,direct:true,fontSize:14,text:active.introduce!);
-        let creatorLabel = getTextLabel(10,top:90,direct:true,fontSize:14,text:active.creatorName!);
+ 
+        let contentPadding:CGFloat = 5;
+        let avatarSize:CGFloat = 80;
+        
+        let titleLabel = getTextLabel(avatarSize+10,top:contentPadding,direct:true,fontSize:16,text:active.title!);
+        let timeStr:String = active.startTime!;
+        let startIndex = timeStr.startIndex.advancedBy(5);
+        let endIndex = timeStr.endIndex.advancedBy(-3);
+        let timeLabel = getTextLabel(avatarSize+10,top:30,direct:true,fontSize:14,text:"时间:\(timeStr.substringWithRange(Range(start:startIndex,end:endIndex)))");
+        let placeLabel = getTextLabel(avatarSize+10+100,top:30,direct:true,fontSize:14,text:"地点：\(active.address!)");
+        let contentLabel = getTextLabel(avatarSize+10,top:50,direct:true,fontSize:14,text:active.introduce!);
+        let creatorLabel = getTextLabel(8,top:90,direct:true,fontSize:14,text:active.creatorName!);
         var partiStr = "";
         if let num = active.inmember {
             if(num > 0){
@@ -80,13 +93,14 @@ class FootballViewController: UITableViewController,PduDelegate {
             }
         }
         if(creatorImg == nil){
-            creatorImg = UIImage(named: "default.png")!
+            creatorImg = UIImage(named: "default")!
         }
-        let avatarImage:UIImageView = UIImageView(image:creatorImg!.stretchableImageWithLeftCapWidth(86,topCapHeight:86));
-        avatarImage.layer.cornerRadius = 43;
+        let avatarImage:UIImageView = UIImageView(image:creatorImg!.stretchableImageWithLeftCapWidth(80,topCapHeight:80));
+        avatarImage.frame = CGRectMake(8,5,avatarSize,avatarSize);
+        avatarImage.layer.cornerRadius = 40;
         avatarImage.layer.masksToBounds = true;
-
-        retView.frame = CGRectMake(10,5,280,130);
+        
+        retView.frame = CGRectMake(bgImgMargin,bgImgMargin,bgImgWidth,110);
         retView.addSubview(bimgView);
         retView.addSubview(titleLabel);
         retView.addSubview(timeLabel);
@@ -174,7 +188,7 @@ class FootballViewController: UITableViewController,PduDelegate {
         cell.backgroundColor = indexPath.row % 2 == 1 ? UIColor.greenColor():UIColor.redColor();
     }
     override func tableView(tableView:UITableView, heightForRowAtIndexPath indexPath:NSIndexPath) -> CGFloat{
-        return 112;
+        return 120;
     }
 
     @IBAction func changeQuerySort(sender: AnyObject) {
@@ -196,7 +210,7 @@ class FootballViewController: UITableViewController,PduDelegate {
         activePdu!.requestHttp();
     }
     @IBAction func createSportAction(sender: AnyObject) {
-        self.performSegueWithIdentifier("login", sender: self)
+        self.performSegueWithIdentifier("chatview", sender: self)
     }
     //PduDelegate协议
     func reloadTable(){

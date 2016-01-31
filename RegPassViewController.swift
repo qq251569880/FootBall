@@ -176,6 +176,9 @@ class RegPassViewController: UIViewController,PduDelegate {
     func requestFailed(err: ErrInfo) {
         
     }
+    @IBAction func backBtnClick(sender: AnyObject) {
+        self.dismissViewControllerAnimated(true,completion: nil);
+    }
     func tickDownAction(){
         if userAction == .Register{
             regVcodeBtn.titleLabel?.text = "请\(tickDown)秒后重试";

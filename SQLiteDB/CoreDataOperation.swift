@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import coreData;
+import CoreData;
 
 class CoreDataOperation {
     static let coreInstance = CoreDataOperation();
@@ -51,7 +51,7 @@ class CoreDataOperation {
     }
     func getChatMessage(activeId:String)->[ChatMessage]{
         //声明数据的请求
-        var retData:[ChatMessageData] = [];
+        var retData:[ChatMessage] = [];
         let fetchRequest:NSFetchRequest = NSFetchRequest()
         fetchRequest.fetchLimit = 1 //限定查询结果的数量
         fetchRequest.fetchOffset = 0 //查询的偏移量
@@ -66,7 +66,7 @@ class CoreDataOperation {
         let predicate = NSPredicate(format: "activeId= \(activeId) ", "")
         fetchRequest.predicate = predicate;
         let sortDescrpitor:NSSortDescriptor = NSSortDescriptor(key: "sendTime", ascending: true);
-        fectchRequest.sortDescriptors = [sortDescrpitor];
+        fetchRequest.sortDescriptors = [sortDescrpitor];
         //查询操作
         do {
             let fetchedObjects:[AnyObject]? = try dataContext.executeFetchRequest(fetchRequest)
@@ -76,7 +76,11 @@ class CoreDataOperation {
                 print("id=\(info.activeId)")
                 print("userId=\(info.userId)")
                 print("content=\(info.content)");
-                retData.append(info);
+                var msg:ChatMessage = ChatMessage();
+                msg.activeId = info.activeId;
+                msg.userId = info.userId;
+                msg.content = info.content;
+                retData.append(msg);
             }
         }
         catch {

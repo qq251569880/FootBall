@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import coreData;
+import CoreData;
 
 func saveChatMessage(msg:ChatMessage){
-    CoreDataOperation.CoreInstance.saveChatMessage(msg);
+    CoreDataOperation.coreInstance.saveChatMessage(msg);
 }
