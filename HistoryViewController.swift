@@ -32,10 +32,17 @@ class HistoryViewController: UITableViewController,PduDelegate {
 		let rowNo = indexPath.row;
         let cellId:String = (rowNo % 2 == 0) ? "activeCell1" : "activeCell2";
         let sportCell:UITableViewCell? = tableView.dequeueReusableCellWithIdentifier(cellId,forIndexPath:indexPath);
-        let label:UILabel = sportCell!.viewWithTag(1) as! UILabel;
-        label.text = activePdu!.historyInfo![indexPath.row].title;
-        let msg:UILabel = sportCell!.viewWithTag(2) as! UILabel;
-        //msg.text = PtnSqlite.getLastChat(activePdu!.historyInfo![indexPath.row].activeId);
+        let titleLabel:UILabel = sportCell!.viewWithTag(1) as! UILabel;
+        titleLabel.text = activePdu!.historyInfo![indexPath.row].title;
+        let msgLabel:UILabel = sportCell!.viewWithTag(2) as! UILabel;
+        let msg = getLastChatMessage(activePdu!.historyInfo![indexPath.row].activeId);
+        if(msg.messageType == .Text){
+            msgLabel.text = msg.content;
+        }else if(ssageType == .Voice){
+            msgLabel.text = "语音消息";
+        }else{
+            msgLabel.text = "其他消息";
+        }
         return sportCell!
     }
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{

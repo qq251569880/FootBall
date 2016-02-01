@@ -183,7 +183,10 @@ class PtnPDU
 						params.updateValue(param.value!, forKey:param.name!)
 					}
 				}
-				
+                let accessToken = getLocalString("accesstoken");
+                if(accessToken != nil){
+                    setHeader("accesstoken",value: accessToken!);
+                }
                 let opt = try HTTP.POST(requestUrl!, parameters: params,headers:requestHeader)
 				opt.start { response in
 					if let error = response.error {

@@ -19,7 +19,7 @@ struct Message{
     var sender:String
     var ctime:String
 }
-class ChatViewController: UITableViewController,MessageDelegate {
+class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,MessageDelegate {
 
     var messages = [Message]();
     @IBOutlet weak var MessageTextField: UITextField!
@@ -31,6 +31,8 @@ class ChatViewController: UITableViewController,MessageDelegate {
         // Do any additional setup after loading the view, typically from a nib.
         let del:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate;
         del.xmppDelegate!.messageDelegate = self;
+        tView.delegate = self;
+        tView.dataSource = self;
     }
 
     override func didReceiveMemoryWarning() {
@@ -73,10 +75,10 @@ class ChatViewController: UITableViewController,MessageDelegate {
         return retView;
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return messages.count
     }
-    override func tableView(tableView:UITableView ,cellForRowAtIndexPath indexPath:NSIndexPath ) ->UITableViewCell{
+    func tableView(tableView:UITableView ,cellForRowAtIndexPath indexPath:NSIndexPath ) ->UITableViewCell{
         let identifier:String = "msgCell";
     
         var cell:UITableViewCell? = tableView.dequeueReusableCellWithIdentifier(identifier)
@@ -90,10 +92,30 @@ class ChatViewController: UITableViewController,MessageDelegate {
             }
         }
         var msg:Message = messages[indexPath.row];
+        var photo:UIImageView?;
+        if(msg.userId == getLocalUserString("userid")){
+            photo = UIImageView(frame:CGRectMkae(320-60,10,50,50));
+            cell!.addSubview(photo!);
+            photo.image =  UIImage(data:NSData(contentsOfURL:NSURL(string:getLocalUserString("avatar"))!)!)!;
+            if(msg.messageType == .Text){
+                cell!.addSubview(bubbleView(msg.content,fromSelf:true,position:65));
+            }else{
+                cell!.addSubview(bubbleView("其他消息类型",fromSelf:true,position:65));
+            }
+        }else{
+            photo = UIImageView(frame:CGRectMkae(10,10,50,50));
+            cell!.addSubview(photo!);
+            photo.image =  UIImage(data:NSData(contentsOfURL:NSURL(string:getLocalUserString("avatar"))!)!)!;
+            if(msg.messageType == .Text){
+                cell!.addSubview(bubbleView(msg.content,fromSelf:false,position:65));
+            }else{
+                cell!.addSubview(bubbleView("其他消息类型",fromSelf:false,position:65));
+            }
+        }
         return cell!;
     }
     //每一行的高度
-    override func tableView(tableView:UITableView, heightForRowAtIndexPath indexPath:NSIndexPath) -> CGFloat{
+    func tableView(tableView:UITableView, heightForRowAtIndexPath indexPath:NSIndexPath) -> CGFloat{
         let msg:Message = messages[indexPath.row]; 
         let font:UIFont = UIFont.systemFontOfSize(14);
         let textSize = CGSize(width: 260.0 ,height: 10000.0)

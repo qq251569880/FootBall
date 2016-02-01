@@ -49,7 +49,47 @@ class CoreDataOperation {
              fatalError("不能保存：\(error)")
         }
     }
-    func getChatMessage(activeId:String)->[ChatMessage]{
+    func getLastChatMessage(activeId:String)-> ChatMessage{
+        //声明数据的请求
+        var retData:ChatMessage = ChatMessage();
+        let fetchRequest:NSFetchRequest = NSFetchRequest()
+        fetchRequest.fetchLimit = 1 //限定查询结果的数量
+        fetchRequest.fetchOffset = 0 //查询的偏移量
+         
+        //声明一个实体结构
+        let entity:NSEntityDescription? = NSEntityDescription.entityForName("ChatMessageData",
+            inManagedObjectContext: dataContext)
+        //设置数据请求的实体结构
+        fetchRequest.entity = entity
+         
+        //设置查询条件
+        let predicate = NSPredicate(format: "activeId= \(activeId) ", "")
+        fetchRequest.predicate = predicate;
+        let sortDescrpitor:NSSortDescriptor = NSSortDescriptor(key: "sendTime", ascending: true);
+        fetchRequest.sortDescriptors = [sortDescrpitor];
+        //查询操作
+        do {
+            let fetchedObjects:[AnyObject]? = try dataContext.executeFetchRequest(fetchRequest)
+             
+            //遍历查询的结果
+            for info:ChatMessageData in fetchedObjects as! [ChatMessageData]{
+                print("id=\(info.activeId)")
+                print("userId=\(info.userId)")
+                print("content=\(info.content)");
+                retData = ChatMessage();
+                retData.activeId = info.activeId;
+                retData.userId = info.userId;
+                retData.content = info.content;
+                retData.messageType = info.msgType;
+                break;
+            }
+        }
+        catch {
+            fatalError("查询失败：\(error)")
+        }
+        return retData;
+    }
+    func getChatMessage(activeId:String,limit:Int,offSet:Int)-> [ChatMessage]{
         //声明数据的请求
         var retData:[ChatMessage] = [];
         let fetchRequest:NSFetchRequest = NSFetchRequest()
@@ -80,6 +120,7 @@ class CoreDataOperation {
                 msg.activeId = info.activeId;
                 msg.userId = info.userId;
                 msg.content = info.content;
+                msg.messageType = info.msgType;
                 retData.append(msg);
             }
         }
@@ -87,5 +128,4 @@ class CoreDataOperation {
             fatalError("查询失败：\(error)")
         }
         return retData;
-    }
-}
+    }}
