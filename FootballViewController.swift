@@ -70,7 +70,7 @@ class FootballViewController: UITableViewController,PduDelegate {
         let startIndex = timeStr.startIndex.advancedBy(5);
         let endIndex = timeStr.endIndex.advancedBy(-3);
         let timeLabel = getTextLabel(avatarSize+10,top:30,direct:true,fontSize:14,text:"时间:\(timeStr.substringWithRange(Range(start:startIndex,end:endIndex)))");
-        let placeLabel = getTextLabel(avatarSize+10+100,top:30,direct:true,fontSize:14,text:"地点：\(active.address!)");
+        let placeLabel = getTextLabel(avatarSize+10+150,top:30,direct:true,fontSize:14,text:"地点：\(active.address!)");
         let contentLabel = getTextLabel(avatarSize+10,top:50,direct:true,fontSize:14,text:active.introduce!);
         let creatorLabel = getTextLabel(8,top:90,direct:true,fontSize:14,text:active.creatorName!);
         var partiStr = "";

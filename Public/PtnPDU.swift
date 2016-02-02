@@ -183,7 +183,7 @@ class PtnPDU
 						params.updateValue(param.value!, forKey:param.name!)
 					}
 				}
-                let accessToken = getLocalString("accesstoken");
+                let accessToken = getLocalUserString("accesstoken");
                 if(accessToken != nil){
                     setHeader("accesstoken",value: accessToken!);
                 }

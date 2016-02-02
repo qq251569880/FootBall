@@ -19,10 +19,10 @@ struct Message{
     var sender:String
     var ctime:String
 }
-class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,MessageDelegate {
+class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,MessageDelegate,UITextFieldDelegate {
 
     var messages = [Message]();
-    @IBOutlet weak var MessageTextField: UITextField!
+    @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var sendBtn: UIButton!
     var chatWithUser = String();
     @IBOutlet weak var tView: UITableView!
@@ -91,22 +91,31 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
                 cellView.removeFromSuperview();
             }
         }
-        var msg:Message = messages[indexPath.row];
+        let msg:Message = messages[indexPath.row];
         var photo:UIImageView?;
-        if(msg.userId == getLocalUserString("userid")){
-            photo = UIImageView(frame:CGRectMkae(320-60,10,50,50));
+        if(msg.sender == getLocalUserString("userid")){
+            photo = UIImageView(frame:CGRectMake(320-60,10,50,50));
             cell!.addSubview(photo!);
-            photo.image =  UIImage(data:NSData(contentsOfURL:NSURL(string:getLocalUserString("avatar"))!)!)!;
-            if(msg.messageType == .Text){
+            if let url = NSURL(string:getLocalUserString("avatar")!) {
+                photo!.image =  UIImage(data:NSData(contentsOfURL:url)!);
+            }else{
+                photo!.image = UIImage(named: "default")!
+            }
+            if(msg.type == .Text){
                 cell!.addSubview(bubbleView(msg.content,fromSelf:true,position:65));
             }else{
                 cell!.addSubview(bubbleView("其他消息类型",fromSelf:true,position:65));
             }
         }else{
-            photo = UIImageView(frame:CGRectMkae(10,10,50,50));
+            photo = UIImageView(frame:CGRectMake(10,10,50,50));
             cell!.addSubview(photo!);
-            photo.image =  UIImage(data:NSData(contentsOfURL:NSURL(string:getLocalUserString("avatar"))!)!)!;
-            if(msg.messageType == .Text){
+            if let url = NSURL(string:getLocalUserString("avatar")!) {
+                photo!.image =  UIImage(data:NSData(contentsOfURL:url)!);
+            }else{
+                photo!.image = UIImage(named: "default")!
+            }
+            
+            if(msg.type == .Text){
                 cell!.addSubview(bubbleView(msg.content,fromSelf:false,position:65));
             }else{
                 cell!.addSubview(bubbleView("其他消息类型",fromSelf:false,position:65));
@@ -132,7 +141,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     @IBAction func sendButton(sender: UIButton) {
         
         //本地输入框中的信息
-        let message:String = self.MessageTextField.text!
+        let message:String = self.messageTextField.text!
 
         if (message != "") {
             
@@ -161,8 +170,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             //发送消息
             self.getXmppDelegate().sendElement(mes)
             
-            self.MessageTextField.text = ""
-            self.MessageTextField.resignFirstResponder()
+            self.messageTextField.text = ""
+            self.messageTextField.resignFirstResponder()
             
             let msg:Message = Message(type:.Text,content:message,sender:"you",ctime:getCurrentTime())
             
@@ -176,6 +185,12 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     func getXmppDelegate() -> XmppDelegate {
         let appDel = UIApplication.sharedApplication().delegate as! AppDelegate;
         return appDel.xmppDelegate!;
+    }
+    func textFieldShouldReturn(textField:UITextField) -> Bool {
+        if (textField == self.messageTextField) {
+            textField.resignFirstResponder();
+        }
+        return true
     }
 }
 

@@ -663,7 +663,7 @@
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="12z-Wc-7gw">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
+                                <state key="normal" title="发送"/>
                                 <variation key="widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="305" y="555" width="46" height="30"/>
                                 </variation>
@@ -697,7 +697,7 @@
                         </variation>
                     </view>
                     <connections>
-                        <outlet property="MessageTextField" destination="va4-oT-EsR" id="sn8-BX-rH8"/>
+                        <outlet property="messageTextField" destination="va4-oT-EsR" id="wLd-6B-xzq"/>
                         <outlet property="sendBtn" destination="12z-Wc-7gw" id="7SO-bX-keI"/>
                         <outlet property="tView" destination="6Xz-GQ-kom" id="S0c-r1-PRY"/>
                     </connections>

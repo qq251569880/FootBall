@@ -35,10 +35,10 @@ class HistoryViewController: UITableViewController,PduDelegate {
         let titleLabel:UILabel = sportCell!.viewWithTag(1) as! UILabel;
         titleLabel.text = activePdu!.historyInfo![indexPath.row].title;
         let msgLabel:UILabel = sportCell!.viewWithTag(2) as! UILabel;
-        let msg = getLastChatMessage(activePdu!.historyInfo![indexPath.row].activeId);
-        if(msg.messageType == .Text){
+        let msg = getLastChatMessage(activePdu!.historyInfo![indexPath.row].activeId!);
+        if(msg.messageType == "Text"){
             msgLabel.text = msg.content;
-        }else if(ssageType == .Voice){
+        }else if(msg.messageType == "Voice"){
             msgLabel.text = "语音消息";
         }else{
             msgLabel.text = "其他消息";
